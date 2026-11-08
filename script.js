@@ -5,14 +5,10 @@ const CONFIG = {
   name: "Juli",
   from: "Giuliano",
 
-  /* ¿Cómo te llega el mensaje que deje?  Elegí UNA opción:
-     1) endpoint (recomendado): creá un formulario gratis en https://formspree.io,
-        copiá la URL que te dan (algo como https://formspree.io/f/abcdwxyz) y pegala acá.
-        Cada mensaje te llega por mail y queda guardado en tu panel de Formspree.
-     2) email: si no usás endpoint, se abre su app de correo con el mensaje listo para enviarte.
-     Si dejás las dos vacías, el mensaje solo queda en el dispositivo de ella (modo prueba). */
-  endpoint: "",
-  email: "",
+  /* WhatsApp para que ella te escriba si quiere compartirte su mensaje.
+     Formato internacional sin + ni espacios: 54 9 + característica + número (sin 0 ni 15). */
+  whatsapp: "5491141462757",
+  whatsappText: "Hola Giuliano, soy Juli. Ya vi tu regalo de cumple, te quería contar algo…",
 
   powers: [
     { label: "Que la batería del celu nunca se acabe",  reply: "Concedido. 100% hasta el próximo cumple. Cargador no incluido." },
@@ -33,7 +29,7 @@ const CONFIG = {
     "Que hoy no pienses en nada más que en pasarla bien."
   ],
   letter: [
-    "Espero que te guste mi aporte para tu cumple. Lo hice con mucha onda (y con un poco de código, no podía faltar).",
+    "Espero que mi aporte para el regalo de tu cumpleaños te guste, adicionalmente de este :)",
     "Quiero que hoy la pases increíble: que te rías mucho, comas rico y estés con la gente que más querés.",
     "Que este año nuevo te traiga todo lo bueno que te merecés. ¡Que tengas un cumpleaños hermoso!"
   ],
@@ -426,65 +422,36 @@ document.querySelectorAll(".js-rain").forEach(b => b.addEventListener("click", (
 document.querySelectorAll(".js-again").forEach(b => b.addEventListener("click", () => show(0)));
 $("#toComment").addEventListener("click", () => show(6));
 
-/* ---------- 6 · mensaje para vos ---------- */
-const form = $("#commentForm"), ta = $("#commentText"), msg = $("#formMsg"), sendBtn = $("#sendBtn");
-let sending = false;
+/* ---------- 6 · mensaje secreto (no se envía ni se guarda en ningún lado) ---------- */
+const form = $("#commentForm"), ta = $("#commentText"), msg = $("#formMsg"), vanishBtn = $("#vanishBtn");
+let vanishing = false;
 function buildComment() {
+  ta.getAnimations().forEach(a => a.cancel());
   form.hidden = false; $("#thanks").hidden = true;
   ta.value = ""; $("#count").textContent = "0 / " + ta.maxLength;
   msg.textContent = ""; msg.className = "form-msg";
-  sendBtn.disabled = false; sendBtn.textContent = "Enviar mensaje"; sending = false;
-  $("#devNote").hidden = !!(CONFIG.endpoint || CONFIG.email);
+  vanishBtn.disabled = false; vanishing = false;
+  $("#waLink").href = "https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(CONFIG.whatsappText);
 }
-ta.addEventListener("input", () => { $("#count").textContent = ta.value.length + " / " + ta.maxLength; if (msg.classList.contains("error")) { msg.textContent = ""; msg.className = "form-msg"; } });
-
-async function sendComment(text) {
-  if (CONFIG.endpoint) {
-    const res = await fetch(CONFIG.endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Accept": "application/json" },
-      body: JSON.stringify({
-        message: text,
-        de: CONFIG.name,
-        enviado: new Date().toLocaleString("es-AR"),
-        _subject: "Mensaje de " + CONFIG.name + " desde tu página de cumple"
-      })
-    });
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    return "sent";
-  }
-  if (CONFIG.email) {
-    const subject = encodeURIComponent("Mensaje de " + CONFIG.name + " desde tu página de cumple");
-    window.location.href = "mailto:" + CONFIG.email + "?subject=" + subject + "&body=" + encodeURIComponent(text);
-    return "mailto";
-  }
-  try {
-    const key = "cumple-mensajes", all = JSON.parse(localStorage.getItem(key) || "[]");
-    all.push({ text, at: new Date().toISOString() }); localStorage.setItem(key, JSON.stringify(all));
-  } catch (_) {}
-  return "local";
-}
-form.addEventListener("submit", async e => {
+ta.addEventListener("input", () => {
+  $("#count").textContent = ta.value.length + " / " + ta.maxLength;
+  if (msg.classList.contains("error")) { msg.textContent = ""; msg.className = "form-msg"; }
+});
+form.addEventListener("submit", e => {
   e.preventDefault();
-  if (sending) return;
-  const text = ta.value.trim();
-  if (!text) { msg.textContent = "Escribí algo antes de enviar."; msg.className = "form-msg error"; ta.focus(); return; }
-  if (form.elements["_gotcha"].value) return;
-  sending = true; sendBtn.disabled = true; sendBtn.textContent = "Enviando…";
-  try {
-    const mode = await sendComment(text);
+  if (vanishing) return;
+  if (!ta.value.trim()) { msg.textContent = "Escribí algo primero."; msg.className = "form-msg error"; ta.focus(); return; }
+  vanishing = true; vanishBtn.disabled = true; sfx.whoosh();
+  const anim = ta.animate([
+    { opacity: 1, filter: "blur(0px)", transform: "none" },
+    { opacity: 0, filter: "blur(10px)", transform: "translateY(-18px) scale(.96)" }
+  ], { duration: reduce ? 1 : 650, easing: "ease-in", fill: "forwards" });
+  anim.onfinish = () => {
+    ta.value = "";
     form.hidden = true; $("#thanks").hidden = false;
-    $("#thanksTitle").textContent = mode === "local" ? "Mensaje guardado (modo prueba)" : "¡Mensaje enviado!";
-    $("#thanksText").textContent = mode === "sent" ? "Gracias, " + CONFIG.name + ". Ya me llegó."
-      : mode === "mailto" ? "Se abrió tu app de correo: tocá enviar para que me llegue."
-      : "Se guardó solo en este dispositivo. Para que le llegue a " + CONFIG.from + ", configurá el envío en script.js.";
     $("#thanksTitle").focus({ preventScroll: true });
-    sfx.tada(); burstAt($("#thanks"), 100, { spread: 2.6, power: 13 });
-  } catch (err) {
-    sending = false; sendBtn.disabled = false; sendBtn.textContent = "Enviar mensaje";
-    msg.textContent = "No se pudo enviar. Revisá la conexión y probá de nuevo.";
-    msg.className = "form-msg error";
-  }
+    sfx.tada(); burstAt($("#thanks"), 70, { spread: 2.6, power: 11 });
+  };
 });
 
 /* ---------- go ---------- */

@@ -111,30 +111,32 @@
     </div>
   </section>
 
-  <!-- 6 · mensaje para Giuliano -->
+  <!-- 6 · mensaje secreto -->
   <section class="scene" hidden>
     <div class="card">
-      <h2 tabindex="-1">¿Querés dejarme un mensaje?</h2>
+      <h2 tabindex="-1">Dejá un mensaje secreto</h2>
       <form id="commentForm" novalidate>
-        <p class="lead">Escribí lo que quieras. Me llega solo a mí.</p>
-        <label class="sr-only" for="commentText">Tu mensaje</label>
-        <textarea id="commentText" name="message" rows="6" maxlength="1000" placeholder="Lo que quieras contarme…"></textarea>
-        <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <p class="lead">Escribí lo que quieras. No lo va a leer nadie: es un secreto tuyo con vos.</p>
+        <label class="sr-only" for="commentText">Tu secreto</label>
+        <textarea id="commentText" rows="6" maxlength="1000" autocomplete="off" placeholder="Lo que quieras…"></textarea>
         <span class="count" id="count">0 / 1000</span>
         <p class="form-msg" id="formMsg" role="status" aria-live="polite"></p>
-        <p class="dev-note" id="devNote" hidden>Modo prueba: falta configurar el envío (ver CONFIG en script.js). El mensaje solo se guarda en este dispositivo.</p>
         <div class="actions">
-          <button class="btn" id="sendBtn" type="submit">Enviar mensaje</button>
+          <button class="btn" id="vanishBtn" type="submit">Hacerlo desaparecer</button>
           <button class="btn ghost js-again" type="button">Volver a empezar</button>
         </div>
       </form>
       <div id="thanks" hidden>
-        <h3 class="thanks-title" id="thanksTitle" tabindex="-1"></h3>
-        <p id="thanksText"></p>
+        <h3 class="thanks-title" id="thanksTitle" tabindex="-1">Listo. Quedó entre vos y vos.</h3>
+        <p>El mensaje desapareció y no se guardó en ningún lado.</p>
         <div class="actions">
           <button class="btn js-rain" type="button">Lluvia de confeti</button>
           <button class="btn ghost js-again" type="button">Volver a empezar</button>
         </div>
+      </div>
+      <div class="share">
+        <p>Si me lo querés compartir, mandame un WhatsApp.</p>
+        <a class="btn wa" id="waLink" href="#" target="_blank" rel="noopener">Escribirme por WhatsApp</a>
       </div>
     </div>
   </section>

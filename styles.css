@@ -202,21 +202,23 @@ h2{
 @keyframes blink{50%{opacity:0}}
 .sign{font-family:var(--display);font-size:1.5rem;margin:.4rem 0 0 !important;text-align:right}
 
-/* ---------- scene 6: mensaje ---------- */
+/* ---------- scene 6: mensaje secreto ---------- */
 textarea{
   display:block;width:100%;min-height:9em;resize:vertical;
   font:inherit;font-weight:500;color:var(--ink);background:var(--bg);
   border:3px solid var(--line);border-radius:18px 14px 20px 12px;padding:14px 16px;
 }
 textarea::placeholder{color:var(--soft)}
-.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
 .count{display:block;text-align:right;font-size:.85rem;color:var(--soft);margin:.4rem 0 .2rem}
 .form-msg{margin:.4rem 0 .6rem;font-weight:700}
 .form-msg:empty{display:none}
 .form-msg.error{padding:8px 12px;background:var(--orange);color:var(--on);border:3px solid var(--line);border-radius:14px}
-.dev-note{margin:.4rem 0 .8rem;padding:8px 12px;font-size:.88rem;background:var(--yellow);color:var(--on);border:3px dashed var(--line);border-radius:14px}
 .thanks-title{font-family:var(--display);font-weight:400;font-size:clamp(1.8rem,8vw,2.5rem);line-height:1.08;margin:.1em 0 .3em;text-wrap:balance}
 .thanks-title:focus{outline:none}
+.share{margin-top:1.5rem;padding-top:1.2rem;border-top:3px dashed var(--line)}
+.share p{margin:0 0 .9rem;font-weight:600}
+a.btn{text-decoration:none}
+.btn.wa{background:var(--mint)}
 
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
