@@ -8,7 +8,7 @@ const CONFIG = {
   /* WhatsApp para que ella te escriba si quiere compartirte su mensaje.
      Formato internacional sin + ni espacios: 54 9 + característica + número (sin 0 ni 15). */
   whatsapp: "5491141462757",
-  whatsappText: "Hola Giuliano, soy Juli. Ya vi tu regalo de cumple, te quería contar algo…",
+  whatsappIntro: "Hola Giuliano, soy Juli y te puedo contar esto: ",
 
   powers: [
     { label: "Que la batería del celu nunca se acabe",  reply: "Concedido. 100% hasta el próximo cumple. Cargador no incluido." },
@@ -431,7 +431,6 @@ function buildComment() {
   ta.value = ""; $("#count").textContent = "0 / " + ta.maxLength;
   msg.textContent = ""; msg.className = "form-msg";
   vanishBtn.disabled = false; vanishing = false;
-  $("#waLink").href = "https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(CONFIG.whatsappText);
 }
 ta.addEventListener("input", () => {
   $("#count").textContent = ta.value.length + " / " + ta.maxLength;
@@ -442,6 +441,8 @@ form.addEventListener("submit", e => {
   if (vanishing) return;
   if (!ta.value.trim()) { msg.textContent = "Escribí algo primero."; msg.className = "form-msg error"; ta.focus(); return; }
   vanishing = true; vanishBtn.disabled = true; sfx.whoosh();
+  const secret = ta.value.trim();
+  $("#waLink").href = "https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(CONFIG.whatsappIntro + secret);
   const anim = ta.animate([
     { opacity: 1, filter: "blur(0px)", transform: "none" },
     { opacity: 0, filter: "blur(10px)", transform: "translateY(-18px) scale(.96)" }
